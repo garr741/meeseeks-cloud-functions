@@ -1,51 +1,52 @@
 const functions = require('firebase-functions');
+const request = require('request')
 
 // // Create and Deploy Your First Cloud Functions
 // // https://firebase.google.com/docs/functions/write-firebase-functions
 //
-exports.helloWorld = functions.https.onRequest((request, response) => {
-  response.status(200).end()
-});
 
 exports.actions = functions.https.onRequest((request, response) => {
+  console.log(request.body)
   response.status(200).end()
 })
 
 exports.headcount = functions.https.onRequest((request, response) => {
-  console.log(request.body)
-  var reqBody = req.body
+  response.status(200).end()
+  var reqBody = request.body
   var responseURL = reqBody.response_url
-  if (reqBody.token != YOUR_APP_VERIFICATION_TOKEN){
-    res.status(403).end("Access forbidden")
+  var eventName = reqBody.text
+  if (reqBody.token == 1){
+    response.status(403).end("Access forbidden")
   } else {
     var message = {
-      "text": "This is your first interactive message",
+      "text": "Hey! The " + eventName + " is coming up soon!",
       "attachments": [
         {
-          "text": "Building buttons is easy right?",
-          "fallback": "Shame... buttons aren't supported in this land",
-          "callback_id": "button_tutorial",
+          "text": "Will you be able to attend?",
+          "fallback": "Something has gone wrong, ignore this message!",
+          "callback_id": "button_response",
           "color": "#3AA3E3",
           "attachment_type": "default",
           "actions": [
             {
-              "name": "yes",
-              "text": "yes",
+              "name": "Yes",
+              "text": "Yes",
               "type": "button",
-              "value": "yes"
+              "value": "Yes",
+              "style": "primary",
             },
             {
-              "name": "no",
-              "text": "no",
+              "name": "No",
+              "text": "No",
               "type": "button",
-              "value": "no"
-            },
-            {
-              "name": "maybe",
-              "text": "maybe",
-              "type": "button",
-              "value": "maybe",
+              "value": "No",
               "style": "danger"
+            },
+            {
+              "name": "Maybe",
+              "text": "Maybe",
+              "type": "button",
+              "value": "Maybe"
             }
           ]
         }
@@ -53,5 +54,20 @@ exports.headcount = functions.https.onRequest((request, response) => {
     }
     sendMessageToSlackResponseURL(responseURL, message)
   }
-  response.status(200).end()
 })
+
+function sendMessageToSlackResponseURL(responseURL, JSONmessage) {
+  var postOptions = {
+    uri: responseURL,
+    method: 'POST',
+    headers: {
+      'Content-type': 'application/json'
+    },
+    json: JSONmessage
+  }
+  request(postOptions, (error, response, body) => {
+    if (error){
+      console.log(error)
+    }
+  })
+}
