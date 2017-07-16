@@ -1,8 +1,8 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const request = require('request')
-const knockknock = require('./knockknock')
-const wolf = require('./wolf')
+const knockknock = require('./knockknock/')
+const wolf = require('./wolf/')
 
 admin.initializeApp(functions.config().firebase)
 

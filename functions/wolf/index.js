@@ -9,6 +9,10 @@ exports.handler = ((request, response) => {
       response.send(400)
       return
     }
-    response.status(200).send(result[1]["subpods"][0]["value"])
+    let answer = result[1]["subpods"][0]["value"]
+    if (answer == undefined) {
+      answer = {"text": "Sorry, I can't answer that!"}
+    }
+    response.status(200).send(answer)
   })
 })
