@@ -11,16 +11,16 @@ exports.knockKnock = ((payload) => {
   sendMessageToSlackResponseURL(responseUrl, message)
 })
 
-function documentResponse(user, answer, eventName) {
+documentResponse = ((user, answer, eventName) => {
   admin.database().ref('/users').orderByChild("name").equalTo(user.name).once('value').then(function(snapshot){
     let userId = user.id
     let real_name = snapshot.val()[userId].profile.real_name;
     admin.database().ref('/events').child(eventName).child(answer).push(real_name)
   })
   console.log(user, answer)
-}
+})
 
-function sendMessageToSlackResponseURL(responseURL, JSONmessage){
+sendMessageToSlackResponseURL = ((responseURL, JSONmessage) => {
     let postOptions = {
         uri: responseURL,
         method: 'POST',
@@ -34,4 +34,4 @@ function sendMessageToSlackResponseURL(responseURL, JSONmessage){
             console.log("Error: " + error)
         }
     })
-}
+})
