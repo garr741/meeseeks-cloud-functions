@@ -1,6 +1,8 @@
 const request = require('request')
+const admin = require('firebase-admin');
 
-exports.knockKnock = ((payload) => {
+exports.handler = (payload) => {
+    console.log("tylorg", payload)
   let responseUrl = payload.response_url
   let answer = payload.actions[0].name
   let reply = "You replied " + answer + ". Thanks!"
@@ -9,7 +11,7 @@ exports.knockKnock = ((payload) => {
   let eventName = payload.callback_id.split('~')[1]
   documentResponse(user, answer, eventName)
   sendMessageToSlackResponseURL(responseUrl, message)
-})
+}
 
 documentResponse = ((user, answer, eventName) => {
   admin.database().ref('/users').orderByChild("name").equalTo(user.name).once('value').then(function(snapshot){
