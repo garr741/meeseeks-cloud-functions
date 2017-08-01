@@ -11,6 +11,8 @@ exports.actions = functions.https.onRequest((request, response) => {
   let payload = JSON.parse(request.body.payload)
   if (payload.callback_id.includes("knockknock") ) {
     knockKnock.handler(payload)
+  } else if (payload.callback_id.includes("tester")) {
+    knockKnock.tester(payload)
   }
 })
 
