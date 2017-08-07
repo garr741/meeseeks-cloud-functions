@@ -2,6 +2,7 @@
   "name": "functions",
   "description": "Cloud Functions for Firebase",
   "dependencies": {
+    "@slack/client": "^3.10.0",
     "firebase-admin": "~4.2.1",
     "firebase-functions": "^0.5.7",
     "lodash": "^4.17.4",

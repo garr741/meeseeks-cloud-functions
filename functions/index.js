@@ -4,6 +4,7 @@ const request = require('request')
 const knockKnock = require('./knockknock/')
 const wolf = require('./wolf/')
 const announce = require('./announce/')
+const deleteMessage = require('./deleteMessage/')
 
 admin.initializeApp(functions.config().firebase)
 
@@ -25,3 +26,5 @@ exports.eventsHandler = functions.https.onRequest((request, response) => {
 })
 
 exports.announce = functions.https.onRequest(announce.handler)
+
+exports.deleteMessage = functions.https.onRequest(deleteMessage.handler)
