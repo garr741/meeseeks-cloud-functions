@@ -3,7 +3,7 @@ const admin = require('firebase-admin')
 const request = require('request')
 const knockKnock = require('./knockknock/')
 const wolf = require('./wolf/')
-const charter = require('./charter/')
+const announce = require('./announce/')
 
 admin.initializeApp(functions.config().firebase)
 
@@ -24,4 +24,4 @@ exports.eventsHandler = functions.https.onRequest((request, response) => {
   response.status(200).send(request.body.challenge)
 })
 
-exports.chart = functions.https.onRequest(charter.handler)
+exports.announce = functions.https.onRequest(announce.handler)
