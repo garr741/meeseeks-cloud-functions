@@ -13,29 +13,36 @@ exports.handler = ((request, response) => {
     return
   }
   if (request.body.channel_id != channelId) {
-    response.status(200).send({'text': "Please try again using the #announcements channel." + request.body.text})
+    console.log("Posted from the wrong channel")
+    response.status(200).send({'text': "Please try again using the #announcements channel. \n\n" + request.body.text})
     return
   }
   if (request.body.text.trim() == "") {
+    console.log("Empty message")
     response.status(200).send({'text': 'Please add a message'})
     return
   }
   if (request.body.text.trim() == "help") {
+    console.log("Asked for help")
     response.status(200).send(getHelpMessage())
     return
   }
-  const responseUrl = request.body.response_url
-  const text = request.body.text
-  sendMessageToSlackResponseURL(responseUrl, text)
+  console.log("Regular response")
   response.status(200).send({'text': 'Your announcement is on the way. Please use threads to provide more updates!'})
+  const responseUrl = request.body.response_url
+  const obj = {
+    "text": request.body.text,
+    "response_type": "in_channel",
+  }
+  sendMessageToSlackResponseURL(responseUrl, obj)
 })
 
 const getHelpMessage = () => {
   let message = "Use this command to post to the #announcements channel. \n\n"
   message = message + "To space your text over multiple lines, use Shift+Enter.\n\n"
   message = message + "Tagging, @channel @here and @everyone should work as expected and please use it wisely\n\n"
-  message = message + "You cannot edit a message after you send it, so please proofread or make corrections in a thread beneath this message.\n"
-  message = message + "Please do not double post\n"
+  message = message + "You cannot edit a message after you send it, so please proofread or make corrections in a thread beneath your message.\n\n"
+  message = message + "Please do not double post to #announcements\n"
   let obj = {
     "response_type": "ephemeral",
     "text": message
@@ -56,7 +63,7 @@ const sendMessageToSlackResponseURL = ((responseURL, message) => {
     if (error){
       console.log("Error: " + error)
     } else {
-      console.log("Message reply success")
+      console.log("Response: " + JSON.stringify(response))
     }
   })
 })
