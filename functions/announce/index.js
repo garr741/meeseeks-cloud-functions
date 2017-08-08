@@ -30,8 +30,9 @@ exports.handler = ((request, response) => {
   console.log("Regular response")
   response.status(200).send({'text': 'Your announcement is on the way. Please use threads to provide more updates!'})
   const responseUrl = request.body.response_url
+  const reply = "Announcement by: <@" + request.body.user_id + "|" + request.body.user_name + ">\n\n\n" + request.body.text
   const obj = {
-    "text": request.body.text,
+    "text": reply,
     "response_type": "in_channel",
   }
   sendMessageToSlackResponseURL(responseUrl, obj)
