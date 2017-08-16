@@ -8,6 +8,10 @@ const channelId = functions.config().slack.testinggroundsid
 
 exports.handler = ((request, response) => {
   console.log(request.body)
+  if (request.body.ping != undefined) {
+    response.status(200).send({'result': 'ok'})
+    return
+  } 
   if (request.body.token != verification) {
     response.status(404).end()
     return

@@ -5,6 +5,9 @@ const knockKnock = require('./knockknock/')
 const wolf = require('./wolf/')
 const announce = require('./announce/')
 const deleteMessage = require('./deleteMessage/')
+const channels = require('./channels')
+const messages = require('./messages')
+const files = require('./files')
 
 admin.initializeApp(functions.config().firebase)
 
@@ -22,6 +25,17 @@ exports.wolframAlpha = functions.https.onRequest(wolf.handler);
 
 exports.eventsHandler = functions.https.onRequest((request, response) => {
   console.log(request.body)
+  switch (request.body.event.type) {
+    case 'channel_created':
+      channels.handler(request, response)
+      break
+    case 'message':
+      messages.handler(request, response)
+      break
+    case 'file_created':
+      files.handler(request, response)
+      break
+  }
   response.status(200).send(request.body.challenge)
 })
 
