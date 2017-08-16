@@ -6,7 +6,6 @@ const token = functions.config().slack.key
 const verification = functions.config().slack.verification
 
 
-exports.handler = ((request, response) => {
-  console.log("Channel Handled", request.body)
-  response.status(200).end()
+exports.handler = ((request) => {
+  console.log("Channel Handled")
 })

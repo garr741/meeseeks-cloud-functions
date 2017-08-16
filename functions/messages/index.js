@@ -5,7 +5,14 @@ const WebClient = require('@slack/client').WebClient
 const token = functions.config().slack.key
 const verification = functions.config().slack.verification
 
-exports.handler = ((request, response) => {
-  console.log("Message Handled", request.body)
-  response.status(200).end()
+exports.handler = ((request) => {
+  if (request.body.event.sub_type != undefined) {
+    return
+  }
+  console.log("Message Sent")
+  let userId = request.body.event.user
+  let dataRef = admin.database().ref('data').child('/tracking/messagesSent/' + userId)
+  dataRef.transaction((messagesSent) => {
+    return (messagesSent || 0) + 1
+  })
 })

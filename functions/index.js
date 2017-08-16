@@ -25,18 +25,18 @@ exports.wolframAlpha = functions.https.onRequest(wolf.handler);
 
 exports.eventsHandler = functions.https.onRequest((request, response) => {
   console.log(request.body)
+  response.status(200).end()
   switch (request.body.event.type) {
     case 'channel_created':
-      channels.handler(request, response)
-      break
+      channels.handler(request)
+      return
     case 'message':
-      messages.handler(request, response)
-      break
+      messages.handler(request)
+      return
     case 'file_created':
-      files.handler(request, response)
-      break
+      files.handler(request)
+      return
   }
-  response.status(200).send(request.body.challenge)
 })
 
 exports.announce = functions.https.onRequest(announce.handler)
