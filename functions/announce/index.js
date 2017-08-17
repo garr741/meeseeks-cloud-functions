@@ -4,7 +4,7 @@ const admin = require('firebase-admin')
 const WebClient = require('@slack/client').WebClient
 const token = functions.config().slack.key
 const verification = functions.config().slack.verification
-const channelId = functions.config().slack.testinggroundsid
+const channelId = functions.config().slack.announcementsid
 
 exports.handler = ((request, response) => {
   console.log(request.body)
