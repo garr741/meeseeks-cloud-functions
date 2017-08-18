@@ -24,7 +24,7 @@ exports.actions = functions.https.onRequest((request, response) => {
 exports.wolframAlpha = functions.https.onRequest(wolf.handler);
 
 exports.eventsHandler = functions.https.onRequest((request, response) => {
-  console.log(request.body)
+  console.log(request)
   response.status(200).end()
   switch (request.body.event.type) {
     case 'channel_created':

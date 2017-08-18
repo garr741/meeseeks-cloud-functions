@@ -9,7 +9,6 @@ exports.handler = ((request) => {
   if (request.body.event.sub_type != undefined) {
     return
   }
-  console.log("Message Sent")
   let userId = request.body.event.user
   let dataRef = admin.database().ref('data').child('/tracking/messagesSent/' + userId)
   dataRef.transaction((messagesSent) => {

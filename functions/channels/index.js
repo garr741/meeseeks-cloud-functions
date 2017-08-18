@@ -8,7 +8,6 @@ const channelId = functions.config().slack.generalid
 
 
 exports.handler = ((request) => {
-  console.log("Channel Handled")
   let newChannelName = request.body.event.channel.name 
   let newChannelId = request.body.event.channel.id
   let message = "A new channel: <#" + newChannelId + "|" + newChannelName +"> was just created!"

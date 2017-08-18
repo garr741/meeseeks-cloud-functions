@@ -6,7 +6,6 @@ const token = functions.config().slack.key
 const verification = functions.config().slack.verification
 
 exports.handler = ((request) => {
-  console.log("File Uploaded")
   let userId = request.body.event.user_id
   let dataRef = admin.database().ref('data').child('/tracking/fileUploads/' + userId)
   dataRef.transaction((fileUploads) => {

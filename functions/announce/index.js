@@ -4,10 +4,10 @@ const admin = require('firebase-admin')
 const WebClient = require('@slack/client').WebClient
 const token = functions.config().slack.key
 const verification = functions.config().slack.verification
-const channelId = functions.config().slack.announcementsid
+const channelId = functions.config().slack.testinggroundsid
 
 exports.handler = ((request, response) => {
-  console.log(request.body)
+  // console.log(request.body)
   if (request.body.ping != undefined) {
     response.status(200).send({'result': 'ok'})
     return
@@ -32,14 +32,29 @@ exports.handler = ((request, response) => {
     return
   }
   console.log("Regular response")
-  response.status(200).send({'text': 'Your announcement is on the way. Please use threads to provide more updates!'})
-  const responseUrl = request.body.response_url
-  const reply = "Announcement by: <@" + request.body.user_id + "|" + request.body.user_name + ">\n\n\n" + request.body.text
-  const obj = {
-    "text": reply,
-    "response_type": "in_channel",
-  }
-  sendMessageToSlackResponseURL(responseUrl, obj)
+  response.status(200).send({'text': 'Your announcement is on the way. Please use threads to provide more updates or changes!'})
+  let web = new WebClient(token)
+  let user = request.body.user_id
+  web.users.info(user, (err, res) => {
+    if (err) {
+      console.log(err)
+    } else {
+      console.log("body", res)
+      let options = {
+        username: res.user.profile.real_name_normalized,
+        as_user: false,
+        icon_url: res.user.profile.image_512
+      }
+      let reply = request.body.text
+      web.chat.postMessage(channelId, reply, options, (err, res) => {
+        if (err) {
+          console.log("message err", err)
+        } else {
+          console.log("message success")
+        }
+      })
+    }
+  })
 })
 
 const getHelpMessage = () => {
