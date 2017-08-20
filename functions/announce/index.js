@@ -2,12 +2,17 @@ const request = require('request')
 const functions = require('firebase-functions')
 const admin = require('firebase-admin')
 const WebClient = require('@slack/client').WebClient
+const helpers = require('./../helpers')
+
 const token = functions.config().slack.key
 const verification = functions.config().slack.verification
-const channelId = functions.config().slack.testinggroundsid
 
-exports.handler = ((request, response) => {
+exports.handler = ((request, response, channelId) => {
   console.log(request.body)
+  if (request.body.ping != undefined) {
+    response.status(200).send({'result': 'ok'})
+    return
+  } 
   if (request.body.token != verification) {
     response.status(404).end()
     return
@@ -28,14 +33,11 @@ exports.handler = ((request, response) => {
     return
   }
   console.log("Regular response")
-  response.status(200).send({'text': 'Your announcement is on the way. Please use threads to provide more updates!'})
-  const responseUrl = request.body.response_url
-  const reply = "Announcement by: <@" + request.body.user_id + "|" + request.body.user_name + ">\n\n\n" + request.body.text
-  const obj = {
-    "text": reply,
-    "response_type": "in_channel",
-  }
-  sendMessageToSlackResponseURL(responseUrl, obj)
+  response.status(200).send({'text': 'Your announcement is on the way. Please use threads to provide more updates or changes!'})
+  let message = request.body.text
+  let userId = request.body.user_id
+  console.log(message, channelId, userId)
+  helpers.sendMessageAsUser(message, channelId, userId)
 })
 
 const getHelpMessage = () => {
@@ -50,21 +52,3 @@ const getHelpMessage = () => {
   }
   return obj
 }
-
-const sendMessageToSlackResponseURL = ((responseURL, message) => {
-  let postOptions = {
-    uri: responseURL,
-    method: 'POST',
-    headers: {
-      'Content-type': 'application/json'
-    },
-    json: message
-  }
-  request(postOptions, (error, response, body) => {
-    if (error){
-      console.log("Error: " + error)
-    } else {
-      console.log("Response: " + JSON.stringify(response))
-    }
-  })
-})
