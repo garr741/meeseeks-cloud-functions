@@ -39,6 +39,11 @@ exports.eventsHandler = functions.https.onRequest((request, response) => {
   }
 })
 
-exports.announce = functions.https.onRequest(announce.handler)
+exports.announce = functions.https.onRequest((request, response) => {
+  admin.database().ref('/config').once('value').then(function(snapshot){
+    const channelId = snapshot.val()['announceChannel']
+    announce.handler(request, response, channelId)
+  })
+})
 
 exports.deleteMessage = functions.https.onRequest(deleteMessage.handler)

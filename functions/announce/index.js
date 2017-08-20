@@ -2,12 +2,13 @@ const request = require('request')
 const functions = require('firebase-functions')
 const admin = require('firebase-admin')
 const WebClient = require('@slack/client').WebClient
+const helpers = require('./../helpers')
+
 const token = functions.config().slack.key
 const verification = functions.config().slack.verification
-const channelId = functions.config().slack.testinggroundsid
 
-exports.handler = ((request, response) => {
-  // console.log(request.body)
+exports.handler = ((request, response, channelId) => {
+  console.log(request.body)
   if (request.body.ping != undefined) {
     response.status(200).send({'result': 'ok'})
     return
@@ -33,28 +34,10 @@ exports.handler = ((request, response) => {
   }
   console.log("Regular response")
   response.status(200).send({'text': 'Your announcement is on the way. Please use threads to provide more updates or changes!'})
-  let web = new WebClient(token)
-  let user = request.body.user_id
-  web.users.info(user, (err, res) => {
-    if (err) {
-      console.log(err)
-    } else {
-      console.log("body", res)
-      let options = {
-        username: res.user.profile.real_name_normalized,
-        as_user: false,
-        icon_url: res.user.profile.image_512
-      }
-      let reply = request.body.text
-      web.chat.postMessage(channelId, reply, options, (err, res) => {
-        if (err) {
-          console.log("message err", err)
-        } else {
-          console.log("message success")
-        }
-      })
-    }
-  })
+  let message = request.body.text
+  let userId = request.body.user_id
+  console.log(message, channelId, userId)
+  helpers.sendMessageAsUser(message, channelId, userId)
 })
 
 const getHelpMessage = () => {
@@ -69,21 +52,3 @@ const getHelpMessage = () => {
   }
   return obj
 }
-
-const sendMessageToSlackResponseURL = ((responseURL, message) => {
-  let postOptions = {
-    uri: responseURL,
-    method: 'POST',
-    headers: {
-      'Content-type': 'application/json'
-    },
-    json: message
-  }
-  request(postOptions, (error, response, body) => {
-    if (error){
-      console.log("Error: " + error)
-    } else {
-      console.log("Response: " + JSON.stringify(response))
-    }
-  })
-})
