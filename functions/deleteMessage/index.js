@@ -11,7 +11,7 @@ exports.handler = ((request, response) => {
     if (err) {
       console.log(err)
     } else {
-      console.log(response)
+      console.log(res)
     }
   })
   response.status(200).end()
