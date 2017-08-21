@@ -1,10 +1,10 @@
 const WebClient = require('@slack/client').WebClient
 const functions = require('firebase-functions')
 const token = functions.config().slack.key
+const request = require('request')
 
-exports.sendMessageAsUser = ((message, channelId, userId, userName, iconUrl) => {
+exports.sendMessageAsUser = ((message, channelId, userId) => {
   let web = new WebClient(token)
-  console.log("check 1")
   web.users.info(userId, (err, res) => {
     if (err) {
       console.log(err)
@@ -15,7 +15,6 @@ exports.sendMessageAsUser = ((message, channelId, userId, userName, iconUrl) => 
         as_user: false,
         icon_url: res.user.profile.image_512
       }
-      console.log("check 2")
       web.chat.postMessage(channelId, message, options, (err, res) => {
         if (err) {
           console.log("message err", err)
@@ -23,6 +22,25 @@ exports.sendMessageAsUser = ((message, channelId, userId, userName, iconUrl) => 
           console.log("message success")
         }
       })
+    }
+  })
+})
+
+//the message must be in form { 'text' : message }
+exports.sendMessageViaURL = ((message, url) => {
+  let postOptions = {
+    uri: url,
+    method: 'POST',
+    headers: {
+      'Content-type': 'application/json'
+    },
+    json: message
+  }
+  request(postOptions, (error, response, body) => {
+    if (error){
+      console.log("Error: " + error)
+    } else {
+      console.log("Message reply success")
     }
   })
 })

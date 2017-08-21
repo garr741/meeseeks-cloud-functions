@@ -8,6 +8,7 @@ const deleteMessage = require('./deleteMessage/')
 const channels = require('./channels')
 const messages = require('./messages')
 const files = require('./files')
+const calendar = require('./calendar')
 
 admin.initializeApp(functions.config().firebase)
 
@@ -47,3 +48,10 @@ exports.announce = functions.https.onRequest((request, response) => {
 })
 
 exports.deleteMessage = functions.https.onRequest(deleteMessage.handler)
+
+exports.calendar = functions.https.onRequest((request, response) => {
+  admin.database().ref('/config').once('value').then(function(snapshot){
+    const responseURL = snapshot.val()['calendarWebhook']
+    calendar.handler(request, response, responseURL)
+  })
+})
