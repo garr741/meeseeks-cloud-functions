@@ -17,11 +17,6 @@ exports.handler = ((request, response, channelId) => {
     response.status(404).end()
     return
   }
-  if (request.body.channel_id != channelId) {
-    console.log("Posted from the wrong channel")
-    response.status(200).send({'text': "Please try again using the #announcements channel. \n\n" + request.body.text})
-    return
-  }
   if (request.body.text.trim() == "") {
     console.log("Empty message")
     response.status(200).send({'text': 'Please add a message'})
@@ -30,6 +25,11 @@ exports.handler = ((request, response, channelId) => {
   if (request.body.text.trim() == "help") {
     console.log("Asked for help")
     response.status(200).send(getHelpMessage())
+    return
+  }
+  if (request.body.channel_id != channelId) {
+    console.log("Posted from the wrong channel")
+    response.status(200).send({'text': "Please try again using the #announcements channel. \n\n" + request.body.text})
     return
   }
   console.log("Regular response")
