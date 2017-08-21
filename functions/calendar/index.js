@@ -46,6 +46,7 @@ exports.handler = ((req, res, responseUrl) => {
       }
       res.status(200).send("Today")
     } else {
+      console.log(req.body)
       res.status(404).send("Wrong type specified")
     }
   })
