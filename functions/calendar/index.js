@@ -112,10 +112,6 @@ const getAllEventsHappeningTomorrow = ((events, today) => {
 
 const getAllEventsHappeningThisTimeNextWeek = ((events, today) => {
   return filterEventsWithMomentLike(events, today, (thisEvent => {
-    console.log("thisEventDay", thisEvent.day())
-    console.log("todayDay", today.day())
-    console.log("todayWeek", today.week())
-    console.log("thisEventWeek", thisEvent.week())
     return thisEvent.day() == today.day() && today.week() + 1 == thisEvent.week() + 1
   }))
 })
