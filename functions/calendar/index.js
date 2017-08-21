@@ -1,17 +1,10 @@
 const request = require('request')
 const functions = require('firebase-functions')
-const admin = require('firebase-admin')
-const WebClient = require('@slack/client').WebClient
 const helpers = require('./../helpers')
 const moment = require('moment');
 
-const token = functions.config().slack.key
-const verification = functions.config().slack.verification
 const calendarId = functions.config().google.calendarid
 const apiKey = functions.config().google.apikey
-const testingWebhook = functions.config().slack.testingwebhook 
-
-
 
 exports.handler = ((req, res, responseUrl) => {
   const today = moment()
@@ -20,40 +13,40 @@ exports.handler = ((req, res, responseUrl) => {
       let tomorrowEvents = getAllEventsHappeningTomorrow(events, today)
       let messageToSend = createAMessageToSend(tomorrowEvents)
       if (messageToSend.length) {
-        let message = "Here are your events for tomorrow!\n\n" + messageToSend
+        let message = "Here are the events for tomorrow!\n\n" + messageToSend
         let obj = {"text": message }
         helpers.sendMessageViaURL(obj, responseUrl)
       }
-      res.status(200).send(tomorrowEvents)
+      res.status(200).send("Tomorrow")
     } else if (req.body.type == 'thisWeek') {
       let thisWeeksEvents = getAllEventsHappeningThisWeek(events, today)
       let messageToSend = createAMessageToSend(thisWeeksEvents)
       if (messageToSend.length) {
-        let message = "Here are your events for this week!\n\n" + messageToSend
+        let message = "Here are the events for this week!\n\n" + messageToSend
         let obj = {"text": message }
         helpers.sendMessageViaURL(obj, responseUrl)
       }
-      res.status(200).send(thisWeeksEvents)
+      res.status(200).send("This Week")
     } else if (req.body.type == 'thisDayNextWeek') {
       let eventsThisTimeNextWeek = getAllEventsHappeningThisTimeNextWeek(events, today)
       let messageToSend = createAMessageToSend(eventsThisTimeNextWeek)
       if (messageToSend.length) {
-        let message = "Here are your events for one week from now!\n\n" + messageToSend
+        let message = "Here are the events for one week from now! If you cannot attend these events, please let the E-Board members know!\n\n" + messageToSend
         let obj = {"text": message }
         helpers.sendMessageViaURL(obj, responseUrl)
       }
-      res.status(200).send(eventsThisTimeNextWeek)
+      res.status(200).send("This Time Next Week")
     } else if (req.body.type == 'today') {
       let todaysEvents = getAllEventsHappeningToday(events, today)
       let messageToSend = createAMessageToSend(todaysEvents)
       if (messageToSend.length) {
-        let message = "Here are your events for today!\n\n" + messageToSend
+        let message = "Here are the events for today!\n\n" + messageToSend
         let obj = {"text": message }
         helpers.sendMessageViaURL(obj, responseUrl)
       }
-      res.status(200).send(todaysEvents)
+      res.status(200).send("Today")
     } else {
-      res.status(404).send("No type specified")
+      res.status(404).send("Wrong type specified")
     }
   })
 })
@@ -75,7 +68,7 @@ const getAllUpcomingEvents = ((today, callback) => {
       let results = filterEventsWithMomentLike(events.items, today, (thisEvent) => {
         return thisEvent.isSameOrAfter(today)
       })
-      callback(results)
+      callback(results.reverse())
     }
   })
 })
@@ -106,13 +99,13 @@ const getAllEventsHappeningThisWeek = ((events, today) => {
 
 const getAllEventsHappeningToday = ((events, today) => {
   return filterEventsWithMomentLike(events, today, (thisEvent) => {
-    return thisEvent.day() == today.day()
+    return thisEvent.day() == today.day() && thisEvent.week() == today.week()
   })
 })
 
 const getAllEventsHappeningTomorrow = ((events, today) => {
   return filterEventsWithMomentLike(events, today, (thisEvent) => {
-    return thisEvent.day() == (today.day() + 1)
+    return thisEvent.day() == (today.day() + 1) && thisEvent.week() == today.week()
   })
 })
 
