@@ -9,6 +9,7 @@ const channels = require('./channels')
 const messages = require('./messages')
 const files = require('./files')
 const calendar = require('./calendar')
+const speakeasy = require('./speakeasy')
 
 admin.initializeApp(functions.config().firebase)
 
@@ -19,6 +20,8 @@ exports.actions = functions.https.onRequest((request, response) => {
     knockKnock.handler(payload)
   } else if (payload.callback_id.includes("tester")) {
     knockKnock.tester(payload)
+  } else if (payload.callback_id.includes("speakeasy")) {
+    speakeasy.unlocker(payload)
   }
 })
 
@@ -55,3 +58,5 @@ exports.calendar = functions.https.onRequest((request, response) => {
     calendar.handler(request, response, responseURL)
   })
 })
+
+exports.speakeasy = functions.https.onRequest(speakeasy.handler)

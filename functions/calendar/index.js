@@ -69,7 +69,7 @@ const getAllUpcomingEvents = ((today, callback) => {
       let results = filterEventsWithMomentLike(events.items, today, (thisEvent) => {
         return thisEvent.isSameOrAfter(today)
       })
-      callback(results.reverse())
+      callback(results)
     }
   })
 })
@@ -80,7 +80,7 @@ const filterEventsWithMomentLike = ((events, today, callback) => {
     if (item.start == undefined) {
       result = false
     } else if (item.start.dateTime) {
-      let thisEvent = moment(item.start.dateTime)
+      let thisEvent = moment.parseZone(item.start.dateTime)
       result = callback(thisEvent)
     } else if (item.start.date) {
       let thisEvent = moment(item.start.date)
@@ -125,15 +125,17 @@ const createAMessageToSend = (events) => {
 const createAMessageFromEachEvent = (event) => {
   let message = "*" + event.summary + "*\n"
   if (event.start && event.start.date) {
-    message = message + " From: " + moment(event.start.date).calendar() + "\n"
+    message = message + " From: " + moment.parseZone(event.start.date).calendar() + "\n"
   } else if (event.start && event.start.dateTime) {
-    message = message + " From: " + moment(event.start.dateTime).calendar() + "\n"
+    message = message + " From: " + moment.parseZone(event.start.dateTime).calendar() + "\n"
   }
   if (event.end && event.end.date) {
-    message = message + "To: " + moment(event.end.date).calendar() + "\n"
+    message = message + "To: " + moment.parseZone(event.end.date).calendar() + "\n"
   } else if (event.end && event.end.dateTime) {
-    message = message + "To: " + moment(event.end.dateTime).calendar()  + "\n"
+    message = message + "To: " + moment.parseZone(event.end.dateTime).calendar()  + "\n"
   }
-  message = message + "At: " + event.location + "\n"
+  if (event.location) {
+    message = message + "At: " + event.location + "\n"
+  }
   return message + "\n\n"
 }
