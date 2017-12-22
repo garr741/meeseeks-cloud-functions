@@ -10,6 +10,7 @@ const messages = require('./messages')
 const files = require('./files')
 const calendar = require('./calendar')
 const speakeasy = require('./speakeasy')
+const flights = require('./flights')
 
 admin.initializeApp(functions.config().firebase)
 
@@ -60,3 +61,5 @@ exports.calendar = functions.https.onRequest((request, response) => {
 })
 
 exports.speakeasy = functions.https.onRequest(speakeasy.handler)
+
+exports.flights = functions.https.onRequest(flights.handler)
